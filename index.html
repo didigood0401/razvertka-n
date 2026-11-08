@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Развёртка буквы Н</title>
+<style>
+:root{--ink:#1d2433;--blue:#2d5fb0;--gold:#f0b53a;--bg:#f3f1ec}
+*{box-sizing:border-box;margin:0}
+body{font:17px/1.55 Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 40px}
+h1{font-size:clamp(28px,4.4vw,44px);line-height:1.15;margin-bottom:8px}
+.lead{color:#55607a;margin-bottom:20px}
+.top{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+#v{background:#fff;border-radius:12px;min-height:420px;position:relative;overflow:hidden}
+canvas{display:block;width:100%!important;height:100%!important}
+.info{background:#fff;border-radius:12px;padding:24px}
+.info li{margin:7px 0 7px 18px}
+.net{background:#fff;border-radius:12px;padding:12px;margin-top:20px;overflow-x:auto}
+.net img{display:block;width:100%;min-width:760px;height:auto}
+h2{font-size:24px;margin:26px 0 10px}
+@media(max-width:760px){.top{grid-template-columns:1fr}#v{height:340px;min-height:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Развёртка объёмной буквы Н на листе А3</h1>
+<p class="lead">Образец под Ваше ТЗ. Форма как на Вашем фото: с засечками сверху и снизу.</p>
+<div class="top">
+<div id="v" aria-label="3D-модель буквы Н"></div>
+<div class="info">
+<b>Что уже учтено</b>
+<ul>
+<li>единая цельная деталь, как у буквы А преподавателя;</li>
+<li>сплошные линии - вырез, пунктир - сгиб;</li>
+<li>клапаны для склейки по всей конструкции;</li>
+<li>размер каждой детали подписан в см;</li>
+<li>размер буквы 15 × 20,5 × 3 см: предел по высоте листа А3 при глубине 3 см.</li>
+</ul>
+</div>
+</div>
+<h2>Развёртка</h2>
+<div class="net"><img src="net-obrazec.png" alt="Развёртка буквы Н с подписями размеров, образец с водяным знаком"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var v=document.getElementById('v'),W=15,H=20.5,a=6.2,sh=3.5,ov=1.2,c1=8.25,c2=12.25,D=3;
+var P=[[0,0],[a,0],[a,sh],[a-ov,sh],[a-ov,c1],[W-a+ov,c1],[W-a+ov,sh],[W-a,sh],[W-a,0],[W,0],[W,sh],[W-ov,sh],[W-ov,H-sh],[W,H-sh],[W,H],[W-a,H],[W-a,H-sh],[W-a+ov,H-sh],[W-a+ov,c2],[a-ov,c2],[a-ov,H-sh],[a,H-sh],[a,H],[0,H],[0,H-sh],[ov,H-sh],[ov,sh],[0,sh]];
+var s=new THREE.Shape();P.forEach(function(p,i){var x=p[0]-W/2,y=H/2-p[1];i?s.lineTo(x,y):s.moveTo(x,y)});s.closePath();
+var g=new THREE.ExtrudeGeometry(s,{depth:D,bevelEnabled:false});g.translate(0,0,-D/2);
+var m=new THREE.Mesh(g,[new THREE.MeshStandardMaterial({color:0x2d5fb0}),new THREE.MeshStandardMaterial({color:0xf0b53a})]);
+var sc=new THREE.Scene();sc.background=new THREE.Color(0xffffff);sc.add(m);sc.add(new THREE.HemisphereLight(0xffffff,0x8a8a99,.85));
+var l=new THREE.DirectionalLight(0xffffff,.75);l.position.set(10,18,24);sc.add(l);
+var c=new THREE.PerspectiveCamera(35,1,1,200);c.position.set(0,3,48);c.lookAt(0,0,0);
+var r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});r.setPixelRatio(Math.min(devicePixelRatio,2));v.appendChild(r.domElement);
+function size(){var w=v.clientWidth,h=v.clientHeight;r.setSize(w,h);c.aspect=w/h;c.updateProjectionMatrix()}addEventListener('resize',size);size();
+var still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function f(t){m.rotation.y=-.5+Math.sin(t/1400)*.55;m.rotation.x=.08;r.render(sc,c);if(!still)requestAnimationFrame(f)}f(0);
+</script>
+</body>
+</html>
